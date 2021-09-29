@@ -1,35 +1,29 @@
 %% Written by Muhammet Balcilar, France, muhammetbalcilar@gmail.com
+%% Modified by Zaid Al-Sabbag
 % All rights reserved
 %%%%%%%%%%%%
 
 clear all
 close all
 
-file1 = {'Inputs/USBCamera1.bmp',...
-    'Inputs/USBCamera2.bmp',...
-    'Inputs/USBCamera3.bmp',...
-    'Inputs/USBCamera4.bmp',...
-    'Inputs/USBCamera5.bmp',...
-    'Inputs/USBCamera6.bmp',...
-    'Inputs/USBCamera7.bmp',...
-    };
-file2={'Inputs/PTZCamera1.bmp',...
-    'Inputs/PTZCamera2.bmp',...
-    'Inputs/PTZCamera3.bmp',...
-    'Inputs/PTZCamera4.bmp',...
-    'Inputs/PTZCamera5.bmp',...
-    'Inputs/PTZCamera6.bmp',...
-    'Inputs/PTZCamera7.bmp',...
-    };
+imDir1 = 'Inputs/F1';
+imDir2 = 'Inputs/F3';
+squareSize = 70;  % in units of 'mm'
 
+% load all images in the two folders
+n_list = dir(join([imDir1]));
+fnames={n_list.name};
+fnames = fnames(~strncmp(fnames, '.', 1));
+fnames = fnames(~strncmp(fnames, '..',2));
 
+file1 = strcat(imDir1,'/',fnames);
+file2 = strcat(imDir2,'/',fnames);
 
 % Detect checkerboards in images
 [imagePoints{1}, boardSize, imagesUsed1] = detectCheckerboardPoints(file1);
 [imagePoints{2}, boardSize, imagesUsed2] = detectCheckerboardPoints(file2);
 
 % Generate world coordinates of the checkerboards keypoints
-squareSize = 25;  % in units of 'mm'
 worldPoints = generateCheckerboardPoints(boardSize, squareSize);
 
 
@@ -114,7 +108,7 @@ Z=0;
 O=zeros(size(I1));
 % remapping
 for i=1:size(I1,1)
-    i
+    i;
     for j=1:size(I1,2)
         X=inv([Lcam(:,1:2) [-1*j;-1*i;-1]])*(-Z*Lcam(:,3)-Lcam(:,4));
         P=Rcam*[X(1);X(2);Z;1];
